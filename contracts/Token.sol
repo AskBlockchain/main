@@ -10,28 +10,46 @@ You should also build a new function that allows you to modify the cap.
 You should also study the AccessControl contract from Openzeppelin and implement a new role in the same ERC20 contract. 
 This role should be the only one to be able to change the contract’s cap. */
 
-
-
-
 import "../node_modules/@openzeppelin/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
 
- 
 
 
-contract MyToken is ERC20PresetMinterPauser {
-        constructor() ERC20PresetMinterPauser ("MyToken", "KAZ"){
-            _mint(msg.sender, 20000);
+contract KazToken is ERC20PresetMinterPauser {
 
-            _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+    uint256 internal _cap = 4000;
 
-            _setupRole(MINTER_ROLE, _msgSender());
-            _setupRole(PAUSER_ROLE, _msgSender());
+    constructor(address account, uint256 amount) ERC20PresetMinterPauser("Kaz Token", "KAZ") {
+        
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
-                                     
-        }
+        _setupRole(MINTER_ROLE, _msgSender());
+        _setupRole(PAUSER_ROLE, _msgSender());
+
+        
+        require(ERC20.totalSupply() + amount <= cap(), "ERC20Capped: cap exceeded");
+        super._mint(account, amount);
+    }
 
 
-       
+
+    
+
+
+  
+
+    function modifyCap(uint256 cap_) public {
+        require (hasRole(MINTER_ROLE, msg.sender), "Must have MINTER Role");
+        require(cap_ > 0, "ERC20Capped: cap is 0");
+        _cap = cap_;
+    }
+
+      function cap() public view virtual returns (uint256) {
+        return _cap;
+    }
+
+
+  
 }
+
  
     
