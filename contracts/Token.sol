@@ -30,13 +30,6 @@ contract KazToken is ERC20PresetMinterPauser {
         super._mint(account, amount);
     }
 
-
-
-    
-
-
-  
-
     function modifyCap(uint256 cap_) public {
         require (hasRole(MINTER_ROLE, msg.sender), "Must have MINTER Role");
         require(cap_ > 0, "ERC20Capped: cap is 0");
